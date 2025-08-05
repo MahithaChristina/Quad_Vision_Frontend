@@ -1,0 +1,79 @@
+.landing-container {
+    background: linear-gradient(to right, #c33764, #1d2671);
+    color: white;
+    padding: 20px;
+  }
+  
+  /* Typing effect loop */
+  .typewriter-text {
+    display: inline-block;
+    overflow: hidden;
+    border-right: 2px solid white;
+    white-space: nowrap;
+    animation:
+      typing 4s steps(25) infinite,
+      blink 0.6s step-end infinite;
+    font-size: 3rem; /* Bigger font */
+    letter-spacing: 2px;
+  }
+  
+  @keyframes typing {
+    0% {
+      width: 0;
+    }
+    50% {
+      width: 14ch; /* number of characters */
+    }
+    100% {
+      width: 0;
+    }
+  }
+  
+  @keyframes blink {
+    0%, 100% {
+      border-color: white;
+    }
+    50% {
+      border-color: transparent;
+    }
+  }
+  
+  /* Make subtitle bigger */
+  .subtitle {
+    font-size: 1.8rem; /* Adjust as needed */
+    margin-bottom: 30px;
+    opacity: 0;
+    animation: fadeIn 2s ease forwards 2s;;
+  }
+  
+  @keyframes fadeIn {
+    from {
+      opacity: 0;
+      transform: translateY(10px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+
+  .app-name {
+    font-size: 2.5rem;
+    font-weight: bold;
+    margin-bottom: 20px;
+    color: #f9f9f9;
+    animation: zoomIn 1s ease-in-out;
+  }
+  
+  @keyframes zoomIn {
+    from {
+      transform: scale(0.8);
+      opacity: 0;
+    }
+    to {
+      transform: scale(1);
+      opacity: 1;
+    }
+  }
+  
+  
