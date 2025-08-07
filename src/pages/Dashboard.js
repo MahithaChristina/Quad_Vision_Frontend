@@ -167,25 +167,30 @@ export default function Dashboard() {
   if (!data) return <p className="p-4">Loading...</p>;
 
   return (
+    <div className="dashboard-background">
     <div className="container-fluid p-0">
       <StockTicker />
 
-      <div className="container py-4">
-        <h1 className="mb-4 fade-in">Financial Portfolio</h1>
+      <div className="container py-4 px-3">
+        <h1 className="mb-4 fade-in text-center">Financial Portfolio</h1>
 
         {/* Stats Cards */}
-        <div className="row mb-4 fade-in">
-          {/* Account Balance */}
+      <div className="row mb-4 fade-in">
+          
           <div className="col-md-4">
+          <div className="card shadow-sm text-center stat-card balance stat-card">
             <AccountBalance amount={data.account_balance} />
           </div>
+         </div>
 
+
+         
           {/* Total Portfolio Value */}
           <div className="col-md-4">
-            <div className="card shadow-sm text-center">
+            <div className="card shadow-sm text-center stat-card portfolio stat-card">
               <div className="card-body">
-                <h6 className="text-muted">Total Portfolio Value</h6>
-                <h4 className="text-accent">
+                <h6 className="text-white fw-bold fs-4">📊Total Portfolio Value</h6>
+                <h4 className="text-white fw-bold fs-4">
                   ${Number(data.total_portfolio_value).toFixed(2)}
                 </h4>
               </div>
@@ -194,15 +199,15 @@ export default function Dashboard() {
 
           {/* Realized P/L */}
           <div className="col-md-4">
-            <div className="card shadow-sm text-center">
+            <div className="card shadow-sm text-center stat-card pl stat-card">
               <div className="card-body">
-                <h6 className="text-muted">Realized P/L</h6>
+                <h6 className=" text-white fw-bold fs-4 text-center">💼Realized P/L</h6>
                 <h4
-                  className={
+                  className={`fw-bold fs-4 text-center ${
                     Number(data.realized_pl) >= 0
                       ? "text-success"
                       : "text-danger"
-                  }
+                  }`}
                 >
                   ${Number(data.realized_pl).toFixed(2)}
                 </h4>
@@ -226,7 +231,7 @@ export default function Dashboard() {
           <div className="col-md-8">
             <div className="card shadow-sm h-100">
               <div className="card-body">
-                <h5 className="mb-3">Portfolio</h5>
+                <h5 className="mb-3 text-black">Portfolio</h5>
                 <table className="table table-striped table-hover">
                   <thead className="table-light">
                     <tr>
@@ -264,12 +269,15 @@ export default function Dashboard() {
         </div>
 
         {/* Add Investment */}
-        <div className="mt-3 fade-in">
-          <a href="/add-investment" className="btn btn-primary">
-            ➕ Add Investment
-          </a>
-        </div>
+        {/* Add Investment */}
+<div className="d-flex justify-content-center mt-5 mb-4">
+  <a href="/add-investment" className="btn btn-primary fade-in">
+    ➕ Add Investment
+  </a>
+</div>
+
       </div>
+    </div>
     </div>
   );
 }

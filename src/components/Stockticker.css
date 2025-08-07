@@ -1,4 +1,59 @@
+/*.ticker-bar {
+  font-size: 1rem;
+  white-space: nowrap;
+  background: #C6FFDD;  
+background: -webkit-linear-gradient(to right, #f7797d, #FBD786, #C6FFDD);  /* Chrome 10-25, Safari 5.1-6 
+background: linear-gradient(to right, #f7797d, #FBD786, #C6FFDD); /* W3C, IE 10+/ Edge, Firefox 16+, Chrome 26+, Opera 12+, Safari 7+ 
+
+}*/
+
+
+
+
 .ticker-bar {
   font-size: 1rem;
   white-space: nowrap;
+  overflow: hidden;
+  /*background: linear-gradient(to right, #f7797d, #fbd786, #c6ffdd);*/
+
+
+  /*background: #aa4b6b;  /* fallback for old browsers */
+/*background: -webkit-linear-gradient(to bottom, #3b8d99);  /* Chrome 10-25, Safari 5.1-6 
+background: linear-gradient(to bottom, #3b8d99); /* W3C, IE 10+/ Edge, Firefox 16+, Chrome 26+, Opera 12+, Safari 7+ */
+
+
+background: #aa4b6b;  /* fallback for old browsers */
+background: -webkit-linear-gradient(to left, #3b8d99, #6b6b83, #aa4b6b);  /* Chrome 10-25, Safari 5.1-6 */
+background: linear-gradient(to left, #3b8d99, #6b6b83, #aa4b6b); /* W3C, IE 10+/ Edge, Firefox 16+, Chrome 26+, Opera 12+, Safari 7+ */
+
+  position: relative;
 }
+
+.ticker-content {
+  display: inline-block;
+  padding-left: 100%;
+  animation: scroll-left 25s linear infinite;
+}
+
+@keyframes scroll-left {
+  0% {
+    transform: translateX(0%);
+  }
+  100% {
+    transform: translateX(-100%);
+  }
+}
+
+.ticker-item {
+  display: inline-block;
+  margin: 0 2rem;
+  font-weight: 500;
+  color: #fff;
+}
+
+.badge {
+  font-size: 0.8rem;
+  padding: 0.3em 0.6em;
+  border-radius: 1rem;
+}
+
