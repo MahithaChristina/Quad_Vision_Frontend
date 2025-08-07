@@ -180,6 +180,7 @@ export default function AddInvestment() {
       style={{
         minHeight: "100vh",
         background: "linear-gradient(to right, #f8f9fa, #e9ecef)",
+        
         display: "flex",
         justifyContent: "center",
         alignItems: "center",
