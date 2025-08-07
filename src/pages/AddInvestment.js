@@ -1,38 +1,31 @@
-/*import React, { useState, useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import axios from "axios";
-import { useNavigate } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom";
 
 export default function AddInvestment() {
   const navigate = useNavigate();
+  const location = useLocation();
+
   const [form, setForm] = useState({
     stock_symbol: "",
+    company_name: "",
     quantity: "",
-    transaction_type: "BUY",
+    buy_price: "",
   });
-  const [marketPrice, setMarketPrice] = useState(null);
 
-  // Fetch current market price when symbol changes
+  const mode = location.state?.mode || "add"; // "add", "edit", or "buyagain"
+  const stockData = location.state?.stock;
+
   useEffect(() => {
-    if (form.stock_symbol.trim() !== "") {
-      axios
-        .get(`http://localhost:5000/portfolio/ticker`)
-        .then((res) => {
-          // Find price from ticker list
-          const stockData = res.data.find(
-            (s) => s.symbol.toUpperCase() === form.stock_symbol.toUpperCase()
-          );
-          if (stockData) {
-            setMarketPrice(stockData.price);
-          } else {
-            setMarketPrice(null);
-          }
-        })
-        .catch((err) => {
-          console.error(err);
-          setMarketPrice(null);
-        });
+    if (mode === "edit" || mode === "buyagain") {
+      setForm({
+        stock_symbol: stockData.stock_symbol || "",
+        company_name: stockData.company_name || "",
+        quantity: "",
+        buy_price: "",
+      });
     }
-  }, [form.stock_symbol]);
+  }, [mode, stockData]);
 
   const handleChange = (e) => {
     setForm({ ...form, [e.target.name]: e.target.value });
@@ -41,37 +34,68 @@ export default function AddInvestment() {
   const handleSubmit = (e) => {
     e.preventDefault();
 
-    axios
-      .post("http://localhost:5000/portfolio/add", {
-        stock_symbol: form.stock_symbol.toUpperCase(),
-        quantity: Number(form.quantity),
-        transaction_type: form.transaction_type,
-      })
-      .then((res) => {
-        alert(res.data.message);
-        navigate("/");
-      })
-      .catch((err) => console.error(err));
+    const payload = {
+      stock_symbol: form.stock_symbol.toUpperCase(),
+      company_name: form.company_name,
+      quantity: Number(form.quantity),
+      buy_price: Number(form.buy_price),
+    };
+
+    if (mode === "edit") {
+      axios
+        .put(`http://localhost:5000/portfolio/update/${stockData.id}`, payload)
+        .then((res) => {
+          alert(res.data.message);
+          navigate("/dashboard");
+        })
+        .catch((err) => console.error(err));
+    } else if (mode === "buyagain") {
+      axios
+        .put(`http://localhost:5000/portfolio/buyagain/${stockData.id}`, payload)
+        .then((res) => {
+          alert(res.data.message);
+          navigate("/dashboard");
+        })
+        .catch((err) => console.error(err));
+    } else {
+      axios
+        .post("http://localhost:5000/portfolio/add", payload)
+        .then((res) => {
+          alert(res.data.message);
+          navigate("/dashboard");
+        })
+        .catch((err) => console.error(err));
+    }
   };
 
   return (
     <div className="container py-4">
-      <h3>Add Investment</h3>
+      <h3>{mode === "edit" ? "Edit Investment" : mode === "buyagain" ? "Buy Again" : "Add Investment"}</h3>
       <form onSubmit={handleSubmit}>
-        {/* Stock Symbol }
         <div className="mb-3">
           <label>Stock Symbol</label>
           <input
             name="stock_symbol"
             className="form-control"
-            placeholder="AAPL"
             value={form.stock_symbol}
             onChange={handleChange}
             required
+            readOnly={mode !== "add"} // lock for edit/buyagain
           />
         </div>
 
-        {/* Quantity }
+        <div className="mb-3">
+          <label>Company Name</label>
+          <input
+            name="company_name"
+            className="form-control"
+            value={form.company_name}
+            onChange={handleChange}
+            required
+            readOnly={mode !== "add"}
+          />
+        </div>
+
         <div className="mb-3">
           <label>Quantity</label>
           <input
@@ -85,175 +109,24 @@ export default function AddInvestment() {
           />
         </div>
 
-        {/* Transaction Type }
         <div className="mb-3">
-          <label>Transaction Type</label>
-          <select
-            name="transaction_type"
-            className="form-select"
-            value={form.transaction_type}
+          <label>Buy Price</label>
+          <input
+            name="buy_price"
+            type="number"
+            step="0.01"
+            min="0"
+            className="form-control"
+            value={form.buy_price}
             onChange={handleChange}
-          >
-            <option value="BUY">BUY</option>
-            <option value="SELL">SELL</option>
-          </select>
+            required
+          />
         </div>
 
-        {/* Market Price Display }
-        {marketPrice !== null && (
-          <div className="mb-3">
-            <label>Market Price</label>
-            <input
-              className="form-control"
-              value={`$${marketPrice}`}
-              readOnly
-            />
-          </div>
-        )}
-
-        {/* Submit Button }
         <button type="submit" className="btn btn-success">
-          Save Transaction
+          {mode === "edit" ? "Update Investment" : mode === "buyagain" ? "Buy More" : "Save Investment"}
         </button>
       </form>
-    </div>
-  );
-}
-*/
-
-import React, { useState, useEffect } from "react";
-import axios from "axios";
-import { useNavigate } from "react-router-dom";
-
-export default function AddInvestment() {
-  const navigate = useNavigate();
-  const [form, setForm] = useState({
-    stock_symbol: "",
-    quantity: "",
-    transaction_type: "BUY",
-  });
-  const [marketPrice, setMarketPrice] = useState(null);
-
-  useEffect(() => {
-    if (form.stock_symbol.trim() !== "") {
-      axios
-        .get(`http://localhost:5000/portfolio/ticker`)
-        .then((res) => {
-          const stockData = res.data.find(
-            (s) => s.symbol.toUpperCase() === form.stock_symbol.toUpperCase()
-          );
-          if (stockData) {
-            setMarketPrice(stockData.price);
-          } else {
-            setMarketPrice(null);
-          }
-        })
-        .catch((err) => {
-          console.error(err);
-          setMarketPrice(null);
-        });
-    }
-  }, [form.stock_symbol]);
-
-  const handleChange = (e) => {
-    setForm({ ...form, [e.target.name]: e.target.value });
-  };
-
-  const handleSubmit = (e) => {
-    e.preventDefault();
-
-    axios
-      .post("http://localhost:5000/portfolio/add", {
-        stock_symbol: form.stock_symbol.toUpperCase(),
-        quantity: Number(form.quantity),
-        transaction_type: form.transaction_type,
-      })
-      .then((res) => {
-        alert(res.data.message);
-        navigate("/");
-      })
-      .catch((err) => console.error(err));
-  };
-
-  return (
-    <div
-      style={{
-        minHeight: "100vh",
-        background: "linear-gradient(to right, #f8f9fa, #e9ecef)",
-        
-        display: "flex",
-        justifyContent: "center",
-        alignItems: "center",
-        padding: "40px",
-      }}
-    >
-      <div
-        className="card p-4 shadow"
-        style={{ maxWidth: "500px", width: "100%", backgroundColor: "#ffffff" }}
-      >
-        <h3 className="text-center mb-4 text-primary">📈 Add Investment</h3>
-        <form onSubmit={handleSubmit}>
-          {/* Stock Symbol */}
-          <div className="mb-3">
-            <label className="form-label fw-semibold">Stock Symbol</label>
-            <input
-              name="stock_symbol"
-              className="form-control"
-              placeholder="E.g. AAPL"
-              value={form.stock_symbol}
-              onChange={handleChange}
-              required
-            />
-          </div>
-
-          {/* Quantity */}
-          <div className="mb-3">
-            <label className="form-label fw-semibold">Quantity</label>
-            <input
-              name="quantity"
-              type="number"
-              min="1"
-              className="form-control"
-              value={form.quantity}
-              onChange={handleChange}
-              required
-            />
-          </div>
-
-          {/* Transaction Type */}
-          <div className="mb-3">
-            <label className="form-label fw-semibold">Transaction Type</label>
-            <select
-              name="transaction_type"
-              className="form-select"
-              value={form.transaction_type}
-              onChange={handleChange}
-            >
-              <option value="BUY">BUY</option>
-              <option value="SELL">SELL</option>
-            </select>
-          </div>
-
-          {/* Market Price */}
-          {marketPrice !== null && (
-            <div className="mb-3">
-              <label className="form-label fw-semibold">Market Price</label>
-              <input
-                className="form-control bg-light"
-                value={`$${marketPrice}`}
-                readOnly
-              />
-            </div>
-          )}
-
-          {/* Submit Button */}
-          <div className="d-grid mt-4">
-            <button type="submit" className="btn btn-success fw-bold">
-              💾 Save Transaction
-            </button>
-          </div>
-        </form>
-      </div>
     </div>
   );
 }
